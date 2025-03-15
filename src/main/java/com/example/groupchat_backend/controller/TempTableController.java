@@ -25,6 +25,6 @@ public class TempTableController {
 
     @GetMapping("/getDate")
     private String getDate(){
-        return Util.getCurrentDate().toString();
+        return   Util.getCurrentDateTime().toString();
     }
 }
