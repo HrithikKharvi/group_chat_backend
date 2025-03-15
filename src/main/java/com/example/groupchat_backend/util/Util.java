@@ -4,15 +4,16 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Component
 public class Util {
-    public static LocalDate getCurrentDate(){
-        return OffsetDateTime.now().toLocalDate();
+    public static LocalDateTime getCurrentDateTime(){
+        return OffsetDateTime.now().toLocalDateTime();
     }
 
-    public static String getLocalDateToStringDate(LocalDate localDate){
+    public static String getLocalDateToStringDate(LocalDateTime localDate){
         return localDate.toString();
     }
 

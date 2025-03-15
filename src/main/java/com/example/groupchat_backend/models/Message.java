@@ -1,5 +1,6 @@
 package com.example.groupchat_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -8,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity(name="message")
 @Data
@@ -17,12 +18,23 @@ import java.time.LocalDate;
 @Builder
 public class Message {
     @Id
+    @Column(name="unique_id")
     private String uniqueId;
 
     @Column(name="message")
     private String message;
 
-    @Column(name="timeStamp")
-    private LocalDate timeStamp;
+    @Column(name="sent_on")
+    @JsonFormat(pattern="YYYY-MM-DD mm:hh")
+    private LocalDateTime sentOn;
+
+    @Column(name="sent_by")
+    private String sentBy;
+
+    @Column(name="sent_by_id")
+    private String sentById;
+
+    @Column(name="group_id")
+    private String groupId;
 
 }

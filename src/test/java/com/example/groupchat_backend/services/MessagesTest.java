@@ -2,9 +2,7 @@ package com.example.groupchat_backend.services;
 import com.example.groupchat_backend.DataMappers.MessageModelMapper;
 import com.example.groupchat_backend.constants.CommonAppData;
 import com.example.groupchat_backend.models.Message;
-import com.example.groupchat_backend.models.UniqueDateIdentifier;
 import com.example.groupchat_backend.repository.MessagesRepo;
-import com.example.groupchat_backend.util.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,9 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.verify;
+
 
 @ExtendWith(MockitoExtension.class)
 public class MessagesTest {
@@ -28,7 +31,11 @@ public class MessagesTest {
 
     @Test
     public void testSaveMessageSuccess(){
-        MessageModelMapper messageModelMapper = MessageModelMapper.builder().message("test").sentDate(Util.getCurrentDate()).build();
+        MessageModelMapper messageModelMapper = MessageModelMapper.builder().message("test")
+                .groupId("grp1234")
+                .sentBy("test")
+                .sentById("usr123")
+                .build();
         when(uniqueDataBignumberService.getNextUniqueDateIdentifier(any()))
                 .thenReturn(BigInteger.ONE);
         when(messagesRepo.save(any())).thenReturn(null);
@@ -38,4 +45,20 @@ public class MessagesTest {
         Assertions.assertEquals(responseMessage, CommonAppData.SUCCESSFUL_MESSAGE_SAVE);
         verify(messagesRepo).save(any());
     }
+
+    @Test
+    public void testGetAllMessagesSuccess(){
+        List<Message> messages  = new ArrayList<>();
+
+        Message message = Message.builder().uniqueId("1212202323").message("Hey").build();
+        messages.add(message);
+
+        when(messagesRepo.findAllByGroupId(anyString())).thenReturn(messages);
+
+        List<Message> returnedMessages = messageService.getAllMessages(anyString());
+
+        verify(messagesRepo).findAllByGroupId(anyString());
+        Assertions.assertEquals(1, returnedMessages.size());
+    }
+
 }
