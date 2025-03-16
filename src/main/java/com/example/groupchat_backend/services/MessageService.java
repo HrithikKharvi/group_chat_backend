@@ -1,9 +1,12 @@
 package com.example.groupchat_backend.services;
 import com.example.groupchat_backend.DataMappers.MessageModelMapper;
+import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
+import com.example.groupchat_backend.DataNotFoundException;
 import com.example.groupchat_backend.constants.CommonAppData;
 import com.example.groupchat_backend.models.Message;
 import com.example.groupchat_backend.repository.MessagesRepo;
 import com.example.groupchat_backend.util.Util;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +43,17 @@ public class MessageService {
 
     public List<Message> getAllMessages(String groupId){
         return messagesRepo.findAllByGroupId(groupId);
+    }
+
+    @SneakyThrows
+    public String updateMessage(MessageUpdateBody messageUpdateBody){
+        Message foundMessage = messagesRepo.findByUniqueId(messageUpdateBody.getUniqueId());
+
+        if(foundMessage == null)throw new DataNotFoundException("Data not found with message id sent");
+
+        foundMessage.setMessage(messageUpdateBody.getMessage());
+        messagesRepo.save(foundMessage);
+        return CommonAppData.SUCCESSFUL_MESSAGE_UPDATE;
     }
 
 }
