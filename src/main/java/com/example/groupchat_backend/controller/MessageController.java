@@ -50,7 +50,7 @@ public class MessageController {
     })
     private ResponseEntity<String> saveMessage(
             @RequestBody(required = true) MessageModelMapper messageModel){
-        return new ResponseEntity<String>(messageService.saveMessage(messageModel), HttpStatus.ACCEPTED);
+        return  ResponseEntity.status(201).body(messageService.saveMessage(messageModel));
     }
 
 }

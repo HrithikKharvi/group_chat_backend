@@ -58,4 +58,4 @@ build/
 hs_err_pid*
 replay_pid*
 
-*/my_secrets/*
+resources/my_secrets/*
