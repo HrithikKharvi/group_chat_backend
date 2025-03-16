@@ -1,6 +1,7 @@
 package com.example.groupchat_backend.controller;
 
 import com.example.groupchat_backend.DataMappers.MessageModelMapper;
+import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
 import com.example.groupchat_backend.constants.CommonAppData;
 import com.example.groupchat_backend.models.Message;
 import com.example.groupchat_backend.services.MessageService;
@@ -19,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,6 +82,30 @@ public class MessageControllerTest {
         mockMvc.perform(post("/message/new")
                 .contentType("application/json")
                 .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateMessage_ResponseWithSuccess() throws Exception{
+        String requestBody = "{\"uniqueId\" : \"test\", \"message\" : \"sample\"}";
+
+        when(messageService.updateMessage(any(MessageUpdateBody.class))).thenReturn(CommonAppData.SUCCESSFUL_MESSAGE_UPDATE);
+
+        mockMvc.perform(put("/message/update")
+                .contentType("application/json")
+                .content(requestBody))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateMessage_ResponseWithInvalidRequest() throws Exception{
+        String requestBody = "{\"uniqueId\" : \"test\"";
+
+        when(messageService.updateMessage(any(MessageUpdateBody.class))).thenReturn(CommonAppData.SUCCESSFUL_MESSAGE_UPDATE);
+
+        mockMvc.perform(put("/message/update")
+                        .contentType("application/json")
+                        .content(requestBody))
                 .andExpect(status().isBadRequest());
     }
 

@@ -8,5 +8,6 @@ import java.util.List;
 public interface MessagesRepo extends JpaRepository<Message, String> {
 
     List<Message> findAllByGroupId(String groupId);
+    Message findByUniqueId(String uniqueId);
 
 }

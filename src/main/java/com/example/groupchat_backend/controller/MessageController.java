@@ -1,6 +1,7 @@
 package com.example.groupchat_backend.controller;
 
 import com.example.groupchat_backend.DataMappers.MessageModelMapper;
+import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
 import com.example.groupchat_backend.models.Message;
 import com.example.groupchat_backend.services.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +52,20 @@ public class MessageController {
     private ResponseEntity<String> saveMessage(
             @RequestBody(required = true) MessageModelMapper messageModel){
         return  ResponseEntity.status(201).body(messageService.saveMessage(messageModel));
+    }
+
+    @Operation(description = "Used to update the message")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request. Please validate the body before making the request"),
+            @ApiResponse(responseCode = "404", description = "Message not found with id"),
+            @ApiResponse(responseCode = "500", description = "Internal Server error")
+    })
+    @PutMapping("/update")
+    private ResponseEntity<String> updateMessage(
+            @RequestBody(required = true) MessageUpdateBody messageUpdate
+    ){
+        return ResponseEntity.status(200).body(messageService.updateMessage(messageUpdate));
     }
 
 }

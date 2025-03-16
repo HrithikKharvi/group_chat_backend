@@ -1,5 +1,7 @@
 package com.example.groupchat_backend.services;
 import com.example.groupchat_backend.DataMappers.MessageModelMapper;
+import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
+import com.example.groupchat_backend.DataNotFoundException;
 import com.example.groupchat_backend.constants.CommonAppData;
 import com.example.groupchat_backend.models.Message;
 import com.example.groupchat_backend.repository.MessagesRepo;
@@ -13,6 +15,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyString;
@@ -28,6 +32,36 @@ public class MessagesTest {
     private UniqueDataBignumberService uniqueDataBignumberService;
     @InjectMocks
     private MessageService messageService;
+
+    @Test
+    public void testUpdateMessageSuccess(){
+        MessageUpdateBody messageUpdateBody = MessageUpdateBody.builder()
+                .message("Change it!")
+                .uniqueId("test1234")
+                .build();
+
+        Message message = Message.builder()
+                .uniqueId("test1234")
+                .build();
+
+        when(messagesRepo.findByUniqueId(anyString())).thenReturn(message);
+        when(messagesRepo.save(any(Message.class))).thenReturn(null);
+
+        messageService.updateMessage(messageUpdateBody);
+
+        verify(messagesRepo).save(any(Message.class));
+    }
+
+    @Test
+    void testUpdateMessageDataNotFound(){
+        when(messagesRepo.findByUniqueId(anyString())).thenReturn(null);
+        DataNotFoundException exception = assertThrows(DataNotFoundException.class, () ->{
+            messageService.updateMessage(MessageUpdateBody.builder().uniqueId("test").message("test").build());
+        });
+
+        assertEquals("Data not found with message id sent", exception.getMessage());
+
+    }
 
     @Test
     public void testSaveMessageSuccess(){
