@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.models;
+package com.example.groupchat_backend.models.repository;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;

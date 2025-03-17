@@ -1,8 +1,6 @@
 package com.example.groupchat_backend.controller;
 
-import com.example.groupchat_backend.models.TempTable;
-import com.example.groupchat_backend.models.UniqueDateIdentifier;
-import com.example.groupchat_backend.repository.UniqueDateIdentifierRepo;
+import com.example.groupchat_backend.models.repository.TempTable;
 import com.example.groupchat_backend.services.TempTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

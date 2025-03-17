@@ -1,9 +1,9 @@
 package com.example.groupchat_backend.services;
-import com.example.groupchat_backend.DataMappers.MessageModelMapper;
-import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
+import com.example.groupchat_backend.models.MessageModelMapper;
+import com.example.groupchat_backend.models.MessageUpdateBody;
 import com.example.groupchat_backend.DataNotFoundException;
 import com.example.groupchat_backend.constants.CommonAppData;
-import com.example.groupchat_backend.models.Message;
+import com.example.groupchat_backend.models.repository.Message;
 import com.example.groupchat_backend.repository.MessagesRepo;
 import com.example.groupchat_backend.util.Util;
 import lombok.SneakyThrows;

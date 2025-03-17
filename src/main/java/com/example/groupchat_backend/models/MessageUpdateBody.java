@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.DataMappers;
+package com.example.groupchat_backend.models;
 
 import lombok.*;
 
