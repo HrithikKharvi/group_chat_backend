@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.models;
+package com.example.groupchat_backend.models.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

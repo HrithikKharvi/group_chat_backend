@@ -1,8 +1,12 @@
-package com.example.groupchat_backend.models;
+package com.example.groupchat_backend.models.repository;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 
 import java.math.BigInteger;
 

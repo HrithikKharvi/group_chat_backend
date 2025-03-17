@@ -1,9 +1,9 @@
 package com.example.groupchat_backend.controller;
 
-import com.example.groupchat_backend.DataMappers.MessageModelMapper;
-import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
+import com.example.groupchat_backend.models.MessageModelMapper;
+import com.example.groupchat_backend.models.MessageUpdateBody;
 import com.example.groupchat_backend.constants.CommonAppData;
-import com.example.groupchat_backend.models.Message;
+import com.example.groupchat_backend.models.repository.Message;
 import com.example.groupchat_backend.services.MessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

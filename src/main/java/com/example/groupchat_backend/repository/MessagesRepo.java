@@ -1,6 +1,6 @@
 package com.example.groupchat_backend.repository;
 
-import com.example.groupchat_backend.models.Message;
+import com.example.groupchat_backend.models.repository.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

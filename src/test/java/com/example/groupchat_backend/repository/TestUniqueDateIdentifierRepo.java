@@ -1,6 +1,6 @@
 package com.example.groupchat_backend.repository;
 
-import com.example.groupchat_backend.models.UniqueDateIdentifier;
+import com.example.groupchat_backend.models.repository.UniqueDateIdentifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

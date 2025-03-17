@@ -1,8 +1,8 @@
 package com.example.groupchat_backend.controller;
 
-import com.example.groupchat_backend.DataMappers.MessageModelMapper;
-import com.example.groupchat_backend.DataMappers.MessageUpdateBody;
-import com.example.groupchat_backend.models.Message;
+import com.example.groupchat_backend.models.MessageModelMapper;
+import com.example.groupchat_backend.models.MessageUpdateBody;
+import com.example.groupchat_backend.models.repository.Message;
 import com.example.groupchat_backend.services.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
