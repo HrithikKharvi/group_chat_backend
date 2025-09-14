@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.models.repository;
+package com.example.groupchat_backend.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -31,7 +31,7 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @Column(name="gender")
-    private String gender;
+    @Column(name="profile_img")
+    private String profilePic;
 
 }

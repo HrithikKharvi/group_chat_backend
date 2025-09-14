@@ -1,27 +1,22 @@
-package com.example.groupchat_backend.models.repository;
+package com.example.groupchat_backend.models.message.baseClasses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-
-@Entity(name="message")
+@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Message {
-    @Id
-    @Column(name="unique_id")
-    private String uniqueId;
-
-    @Column(name="message")
+@SuperBuilder
+public class CommonMessageData {
+    @Column(name="message_text")
     private String message;
 
     @Column(name="sent_on")
@@ -34,7 +29,7 @@ public class Message {
     @Column(name="sent_by_id")
     private String sentById;
 
-    @Column(name="group_id")
-    private String groupId;
-
+    //null when the message is not replied to any message
+    @Column(name="repliedTo")
+    private String repliedToMessageId;
 }
