@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.models.repository;
+package com.example.groupchat_backend.models.group;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,5 +26,11 @@ public class Group {
 
     @Column(name="created_on")
     private LocalDateTime createdOn;
+
+    @Column(name="created_by")
+    private String created_by;
+
+    @Column(name="updated_on")
+    private LocalDateTime updated_on;
 
 }

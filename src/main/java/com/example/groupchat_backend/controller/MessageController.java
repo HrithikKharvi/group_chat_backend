@@ -1,9 +1,8 @@
 package com.example.groupchat_backend.controller;
 
-import com.example.groupchat_backend.models.MessageModelMapper;
-import com.example.groupchat_backend.models.MessageUpdateBody;
-import com.example.groupchat_backend.models.repository.Message;
-import com.example.groupchat_backend.services.MessageService;
+import com.example.groupchat_backend.models.message.baseClasses.Message;
+import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
+import com.example.groupchat_backend.services.GroupMessageServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,20 +10,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @RestController
 @Tag(name="Messages API", description = "controller to communicate with the messages")
 @RequestMapping("/message")
+@RequiredArgsConstructor
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final GroupMessageServiceImpl groupMessageService;
 
     @GetMapping("/all")
     @Operation(description="Fetch all the messages for the group based on the group ID provided")
@@ -33,38 +31,12 @@ public class MessageController {
             @ApiResponse(responseCode="500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode="204", description = "No message found!")
     })
-    private ResponseEntity<List<Message>> getAllMessages(
-            @RequestParam(name="groupId", required = true) String groupId
+    private Mono<ResponseEntity<MessagePageResponse>> getAllMessages(
+            @RequestParam(name="userId", required = true) String userId,
+            @RequestParam(name="pageSize", required = false, defaultValue = "10")int pageSize,
+            @RequestParam(name="page", required = false, defaultValue = "0") int page
     ){
-        List<Message> messages = messageService.getAllMessages(groupId);
-        return messages.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(messages);
-    }
-
-    @Operation(description = "Save sent message")
-    @PostMapping("/new")
-    @CrossOrigin
-    @ApiResponses(value={
-            @ApiResponse(responseCode = "201", description = "message saved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request. Please validate the body before making the request"),
-            @ApiResponse(responseCode = "500", description = "Internal Server error")
-    })
-    private ResponseEntity<String> saveMessage(
-            @RequestBody(required = true) MessageModelMapper messageModel){
-        return  ResponseEntity.status(201).body(messageService.saveMessage(messageModel));
-    }
-
-    @Operation(description = "Used to update the message")
-    @ApiResponses(value={
-            @ApiResponse(responseCode = "200", description = "updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request. Please validate the body before making the request"),
-            @ApiResponse(responseCode = "404", description = "Message not found with id"),
-            @ApiResponse(responseCode = "500", description = "Internal Server error")
-    })
-    @PutMapping("/update")
-    private ResponseEntity<String> updateMessage(
-            @RequestBody(required = true) MessageUpdateBody messageUpdate
-    ){
-        return ResponseEntity.status(200).body(messageService.updateMessage(messageUpdate));
+        return groupMessageService.getChannelsWithMessages(userId, page, pageSize).map(ResponseEntity::ok);
     }
 
 }

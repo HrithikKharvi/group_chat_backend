@@ -1,28 +1,38 @@
 package com.example.groupchat_backend.services;
 
-import com.example.groupchat_backend.models.GroupResponse;
-import com.example.groupchat_backend.models.repository.Group;
-import com.example.groupchat_backend.repository.GroupRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.groupchat_backend.models.group.UserGroupMapping;
+import com.example.groupchat_backend.models.message.GroupChannelWithMessages;
+import com.example.groupchat_backend.models.message.GroupMessagesMetaData;
+import com.example.groupchat_backend.repository.GroupUserRepo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
+
 
 @Service
+@RequiredArgsConstructor
 public class GroupService {
 
-    @Autowired
-    private GroupRepo groupRepo;
+    private final GroupUserRepo groupUserRepo;
 
-    //method to list out all the groups saved in the database
-    public List<GroupResponse> getAllGroups(){
-        return groupRepo.findAll().stream()
-                .map(grp -> GroupResponse.builder()
-                        .groupId(grp.getId())
-                        .groupName(grp.getGroupName())
-                        .createdOn(grp.getCreatedOn())
-                        .build())
-                .distinct().toList();
+    public Mono<Page<UserGroupMapping>> getAllGroupsWithPage(String userId, Pageable pageable){
+        return Mono.fromCallable(() -> groupUserRepo.findByUserId(userId, pageable));
+    }
+
+    public GroupChannelWithMessages buildGroupChannelsWithMessagesFromGroups(UserGroupMapping group, GroupMessagesMetaData groupMessagePage){
+        return  this.buildGroupChannelsWithMessageFromGroupMessages(group, groupMessagePage);
+
+    }
+
+    public GroupChannelWithMessages buildGroupChannelsWithMessageFromGroupMessages(UserGroupMapping userGroupMapping, GroupMessagesMetaData messagesMetaData){
+        return GroupChannelWithMessages.builder()
+                .chanelName(userGroupMapping.getGroupName())
+                .channelId(userGroupMapping.getGroupId())
+                .messageMetaData(messagesMetaData)
+                .build();
     }
 
 }
