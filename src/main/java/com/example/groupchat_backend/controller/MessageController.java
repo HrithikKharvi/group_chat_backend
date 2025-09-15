@@ -3,6 +3,7 @@ package com.example.groupchat_backend.controller;
 import com.example.groupchat_backend.models.message.baseClasses.Message;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
 import com.example.groupchat_backend.services.GroupMessageServiceImpl;
+import com.example.groupchat_backend.services.interfaces.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +23,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MessageController {
 
-    private final GroupMessageServiceImpl groupMessageService;
+    private final MessageService groupMessageService;
 
     @GetMapping("/all")
     @Operation(description="Fetch all the messages for the group based on the group ID provided")
@@ -31,7 +32,7 @@ public class MessageController {
             @ApiResponse(responseCode="500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode="204", description = "No message found!")
     })
-    private Mono<ResponseEntity<MessagePageResponse>> getAllMessages(
+    public Mono<ResponseEntity<MessagePageResponse>> getAllMessages(
             @RequestParam(name="userId", required = true) String userId,
             @RequestParam(name="pageSize", required = false, defaultValue = "10")int pageSize,
             @RequestParam(name="page", required = false, defaultValue = "0") int page
