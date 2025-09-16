@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
@@ -69,5 +68,24 @@ public class GroupMessageServiceImplTest {
         assertEquals(1, groupChannels.size());
     }
 
+
+    @Test
+    void getAllMessageForGroupByIdForPage_returnAllMessagesForGroup(){
+        Page<GroupMessage> messagesPage = mock(Page.class);
+        doReturn(messagesPage).when(groupMessageService).getAllMessageForGroupById(anyString(), any(Pageable.class));
+
+        Page<GroupMessage> groupMessages= groupMessageService.getAllMessageForGroupByIdForPage(0, 100, "test");
+
+        assertNotNull(groupMessages);
+    }
+
+    @Test
+    void getAllMessageForGroupById_returnAllMessagesFromDb(){
+        when(groupMessagesRepo.findAllByGroupId(anyString(), any(Pageable.class))).thenReturn(mock(Page.class));
+
+        Page<GroupMessage> messagePage = groupMessageService.getAllMessageForGroupById("test", mock(Pageable.class));
+
+        assertNotNull(messagePage);
+    }
 
 }
