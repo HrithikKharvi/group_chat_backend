@@ -21,6 +21,9 @@ public class UniqueDateIdentifier {
     @Column(name="date_field")
     private String date;
 
+    @Column(name="user_id")
+    private String userId;
+
     @Column(name="unique_number")
     private BigInteger uniqueNumber;
 }

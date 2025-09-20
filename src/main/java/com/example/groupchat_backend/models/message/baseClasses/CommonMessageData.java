@@ -29,7 +29,6 @@ public class CommonMessageData {
     @Column(name="sent_by_id")
     private String sentById;
 
-    //null when the message is not replied to any message
     @Column(name="repliedTo")
     private String repliedToMessageId;
 }
