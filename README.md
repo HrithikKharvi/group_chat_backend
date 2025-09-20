@@ -18,7 +18,7 @@ to support the chat application with chat, group and user related data
 | Framework    | Spring Boot    |
 | ORM          | JPA / Hibernate|
 | Database     | MySQL          |
-| Build Tool   | Maven or Gradle|
+| Build Tool   | Maven          |
 | Testing      | JUnit, Mockito |
 | Coverage     | JaCoCo         |
 
