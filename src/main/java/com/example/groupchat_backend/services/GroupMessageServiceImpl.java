@@ -47,7 +47,6 @@ public class GroupMessageServiceImpl implements MessageService {
 
     public Mono<UpdatedGroupMessageResponse> postMessageIntoGroup(RawGroupMessageDTO userSentRawMessage){
         User user = userService.findUserById(userSentRawMessage.getSentByUserId());
-        System.out.println(user);
         if(user == null)return Mono.error(new UserNotFound("User not found with the provided ID : " + userSentRawMessage.getSentByUserId()));
         Group group = groupService.findGroupById(userSentRawMessage.getSentToGroupId());
         if(group == null)return Mono.error(new GroupNotFound("User group not found with the provided ID : " + userSentRawMessage.getSentByUserId()));
@@ -64,7 +63,7 @@ public class GroupMessageServiceImpl implements MessageService {
     public Mono<MessagePageResponse> getChannelsWithMessages(String userId, Integer currentPage, int pageSize) {
         int nextPage = GET_NEXT_INTEGER_COUNT.apply(currentPage);
         PageRequest pageRequest = PageRequest.of(nextPage, pageSize);
-        return groupService.getAllGroupsWithPage(userId, pageRequest)
+        return groupService.getAllGroupsForUserWithPage(userId, pageRequest)
                 .flatMap(groupPageData -> {
                     List<UserGroupMapping> userGroupMappings = groupPageData.getContent();
 
