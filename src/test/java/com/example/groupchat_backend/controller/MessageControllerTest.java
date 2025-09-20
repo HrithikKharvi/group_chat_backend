@@ -1,5 +1,7 @@
 package com.example.groupchat_backend.controller;
 
+import com.example.groupchat_backend.models.message.RawGroupMessageDTO;
+import com.example.groupchat_backend.models.message.UpdatedGroupMessageResponse;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
 import com.example.groupchat_backend.services.interfaces.MessageService;
 import org.junit.jupiter.api.Test;
@@ -12,12 +14,13 @@ import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurity
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(
@@ -69,5 +72,52 @@ class MessageControllerTest {
                 .uri("/message/all")
                 .exchange()
                 .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void postMessageToGroup_savedSuccessfully(){
+        RawGroupMessageDTO messageDTO = RawGroupMessageDTO.builder()
+                        .messageText("Test")
+                                .sentToGroupId("test1234")
+                                        .sentByUserId("testUser")
+                                                .build();
+        UpdatedGroupMessageResponse mockUpdatedMessage = UpdatedGroupMessageResponse.builder().build();
+        when(messageService.postMessageIntoGroup(any())).thenReturn(Mono.just(mockUpdatedMessage));
+
+        webTestClient.post()
+                .uri("/message/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(messageDTO)
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+    @Test
+    void postMessageToGroup_badRequestErrorWhenBodyNotPassed(){
+        UpdatedGroupMessageResponse mockUpdatedMessage = UpdatedGroupMessageResponse.builder().build();
+        when(messageService.postMessageIntoGroup(any())).thenReturn(Mono.just(mockUpdatedMessage));
+
+        webTestClient.post()
+                .uri("/message/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void postMessageToGroup_badRequestErrorWhenRequiredFieldIsMissingInBody(){
+        RawGroupMessageDTO messageDTO = RawGroupMessageDTO.builder()
+                .sentToGroupId("test1234")
+                .sentByUserId("testUser")
+                .build();
+        UpdatedGroupMessageResponse mockUpdatedMessage = UpdatedGroupMessageResponse.builder().build();
+        when(messageService.postMessageIntoGroup(any())).thenReturn(Mono.just(mockUpdatedMessage));
+
+        webTestClient.post()
+                .uri("/message/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(messageDTO)
+                .exchange()
+                .expectStatus().isOk();
     }
 }
