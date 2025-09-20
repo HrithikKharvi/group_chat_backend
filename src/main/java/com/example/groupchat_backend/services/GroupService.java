@@ -1,8 +1,10 @@
 package com.example.groupchat_backend.services;
 
+import com.example.groupchat_backend.models.group.Group;
 import com.example.groupchat_backend.models.group.UserGroupMapping;
 import com.example.groupchat_backend.models.message.GroupChannelWithMessages;
 import com.example.groupchat_backend.models.message.GroupMessagesMetaData;
+import com.example.groupchat_backend.repository.GroupRepo;
 import com.example.groupchat_backend.repository.GroupUserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 
 
 @Service
@@ -17,6 +20,7 @@ import reactor.core.publisher.Mono;
 public class GroupService {
 
     private final GroupUserRepo groupUserRepo;
+    private final GroupRepo groupRepo;
 
     public Mono<Page<UserGroupMapping>> getAllGroupsWithPage(String userId, Pageable pageable){
         return Mono.fromCallable(() -> groupUserRepo.findByUserId(userId, pageable));
@@ -33,6 +37,18 @@ public class GroupService {
                 .channelId(userGroupMapping.getGroupId())
                 .messageMetaData(messagesMetaData)
                 .build();
+    }
+
+    public Group findGroupById(String groupId){
+        Optional<Group> foundGroup = groupRepo.findById(groupId);
+
+        return foundGroup.orElse(null);
+    }
+
+    public UserGroupMapping findUserGroupMapping(String userId, String groupId){
+        Optional<UserGroupMapping> foundGroup = groupUserRepo.findByUserIdAndGroupId(userId, groupId);
+
+        return foundGroup.orElse(null);
     }
 
 }

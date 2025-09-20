@@ -1,8 +1,9 @@
 package com.example.groupchat_backend.controller;
 
+import com.example.groupchat_backend.models.message.RawGroupMessageDTO;
+import com.example.groupchat_backend.models.message.UpdatedGroupMessageResponse;
 import com.example.groupchat_backend.models.message.baseClasses.Message;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
-import com.example.groupchat_backend.services.GroupMessageServiceImpl;
 import com.example.groupchat_backend.services.interfaces.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -38,6 +39,17 @@ public class MessageController {
             @RequestParam(name="page", required = false, defaultValue = "0") int page
     ){
         return groupMessageService.getChannelsWithMessages(userId, page, pageSize).map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/new")
+    @Operation(description="Upload a message to the group")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "201", description = "Message posted successfully to the group",  content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Message.class)))),
+            @ApiResponse(responseCode="500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode="400", description = "Bad data being sent to group")
+    })
+    public Mono<UpdatedGroupMessageResponse> postMessageToGroup(@RequestBody RawGroupMessageDTO rawGroupMessageDTO){
+        return groupMessageService.postMessageIntoGroup(rawGroupMessageDTO);
     }
 
 }

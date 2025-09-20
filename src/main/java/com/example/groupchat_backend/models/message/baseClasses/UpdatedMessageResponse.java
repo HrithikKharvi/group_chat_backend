@@ -1,4 +1,4 @@
-package com.example.groupchat_backend.models.repository;
+package com.example.groupchat_backend.models.message.baseClasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
