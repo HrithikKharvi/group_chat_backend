@@ -9,6 +9,7 @@ import com.example.groupchat_backend.models.group.UserGroupMapping;
 import com.example.groupchat_backend.models.message.*;
 import com.example.groupchat_backend.models.message.baseClasses.CommonMessageData;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
+import com.example.groupchat_backend.models.message.baseClasses.MessagesMetaData;
 import com.example.groupchat_backend.models.repository.UniqueDateIdentifier;
 import com.example.groupchat_backend.models.user.User;
 import com.example.groupchat_backend.repository.GroupMessagesRepo;
@@ -309,5 +310,48 @@ public class GroupMessageServiceImplTest {
         assertEquals("Test Group", result.getGroupName());
     }
 
+    @Test
+    void getAllMessageForGroupByPage_returnsAllMessages(){
+        when(groupMessagesRepo.findAllByGroupId(anyString(), any(Pageable.class))).thenReturn(mock(Page.class));
+        Page<GroupMessage> pagedData = groupMessageService.getAllMessageForGroupByPage(Group.builder()
+                .id("1234")
+                .build(), PageRequest.of(0, 10));
+        assertNotNull(pagedData);
+    }
 
+    @Test
+    void getMessagesForGroupForPage_returnsMessageMetaData() {
+        String groupId = "group123";
+        int pageSize = 10;
+        int nextPage = 0;
+
+        Group mockGroup = Group.builder().id(groupId).build();
+        Page<GroupMessage> mockPage = mock(Page.class);
+        GroupMessagesMetaData expectedMetaData = new GroupMessagesMetaData(); // or mock(MessagesMetaData.class)
+
+        when(groupService.findGroupById(groupId)).thenReturn(mockGroup);
+        when(groupMessagesRepo.findAllByGroupId(eq(groupId), any(Pageable.class))).thenReturn(mockPage);
+        when(groupMessageService.buildGroupMessageMetaDataFromMessagePage(mockPage)).thenReturn(expectedMetaData);
+
+        Mono<MessagesMetaData> resultMono = groupMessageService.getMessagesForGroupForPage(groupId, pageSize, nextPage);
+
+        MessagesMetaData actual = resultMono.block();
+        assertNotNull(actual);
+    }
+
+    @Test
+    void getMessagesForGroupForPage_throwsGroupNotFound_whenGroupIsMissing() {
+        String groupId = "missing-group";
+        int pageSize = 10;
+        int nextPage = 0;
+
+        when(groupService.findGroupById(groupId)).thenReturn(null);
+
+        Exception thrown = assertThrows(RuntimeException.class, () -> {
+            groupMessageService.getMessagesForGroupForPage(groupId, pageSize, nextPage).block();
+        });
+        Throwable actualCause = thrown.getCause();
+        assertTrue(actualCause instanceof GroupNotFound);
+        assertTrue(actualCause.getMessage().contains("User group not found with the provided ID :"));
+    }
 }

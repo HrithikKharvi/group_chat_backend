@@ -3,6 +3,9 @@ package com.example.groupchat_backend.constants;
 public class CommonAppData {
     public static final String SUCCESSFUL_MESSAGE_SAVE = "Message saved successfully";
     public static final String SUCCESSFUL_MESSAGE_UPDATE = "Message updated successfully";
+
+    public static final String GROUP_NOT_FOUND_ERROR_MESSAGE = "User group not found with the provided ID : ";
+
     public static final String HYPHEN = "-";
 
     //Default message count for the paginated messages

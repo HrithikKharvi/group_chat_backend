@@ -3,6 +3,7 @@ package com.example.groupchat_backend.controller;
 import com.example.groupchat_backend.models.message.RawGroupMessageDTO;
 import com.example.groupchat_backend.models.message.UpdatedGroupMessageResponse;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
+import com.example.groupchat_backend.models.message.baseClasses.MessagesMetaData;
 import com.example.groupchat_backend.services.interfaces.MessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ class MessageControllerTest {
                 .thenReturn(Mono.just(mockResponse));
 
         webTestClient.get()
-                .uri("/message/all?userId=test&pageSize=10&page=0")
+                .uri("/message/group/init-load?userId=test&pageSize=10&page=0")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(MessagePageResponse.class);
@@ -69,7 +70,7 @@ class MessageControllerTest {
                 .thenReturn(Mono.empty());
 
         webTestClient.get()
-                .uri("/message/all")
+                .uri("/message/group/init-load")
                 .exchange()
                 .expectStatus().isBadRequest();
     }
@@ -119,5 +120,30 @@ class MessageControllerTest {
                 .bodyValue(messageDTO)
                 .exchange()
                 .expectStatus().isOk();
+    }
+
+    @Test
+    void getAllMessagesWithGroupIdForPage_ReturnsOk() {
+        MessagePageResponse mockResponse = MessagePageResponse.builder().build();
+
+        when(messageService.getChannelsWithMessages(anyString(), anyInt(), anyInt()))
+                .thenReturn(Mono.just(mockResponse));
+
+        webTestClient.get()
+                .uri("/message/group/all/1234")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(MessagesMetaData.class);
+    }
+
+    @Test
+    void getAllMessagesWithGroupIdForPage_returnBadRequest(){
+        when(messageService.getChannelsWithMessages(anyString(), anyInt(), anyInt()))
+                .thenReturn(Mono.empty());
+
+        webTestClient.get()
+                .uri("/message/group/all/1234?page=2344ff")
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 }
