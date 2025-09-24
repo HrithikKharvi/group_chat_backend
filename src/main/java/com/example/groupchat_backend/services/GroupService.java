@@ -22,7 +22,7 @@ public class GroupService {
     private final GroupUserRepo groupUserRepo;
     private final GroupRepo groupRepo;
 
-    public Mono<Page<UserGroupMapping>> getAllGroupsWithPage(String userId, Pageable pageable){
+    public Mono<Page<UserGroupMapping>> getAllGroupsForUserWithPage(String userId, Pageable pageable){
         return Mono.fromCallable(() -> groupUserRepo.findByUserId(userId, pageable));
     }
 
