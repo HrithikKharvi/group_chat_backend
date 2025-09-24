@@ -9,6 +9,7 @@ import com.example.groupchat_backend.models.group.UserGroupMapping;
 import com.example.groupchat_backend.models.message.*;
 import com.example.groupchat_backend.models.message.baseClasses.CommonMessageData;
 import com.example.groupchat_backend.models.message.baseClasses.MessagePageResponse;
+import com.example.groupchat_backend.models.message.baseClasses.MessagesMetaData;
 import com.example.groupchat_backend.models.user.User;
 import com.example.groupchat_backend.repository.GroupMessagesRepo;
 import com.example.groupchat_backend.services.interfaces.MessageService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.groupchat_backend.constants.CommonAppData.GROUP_NOT_FOUND_ERROR_MESSAGE;
 import static com.example.groupchat_backend.constants.CommonAppData.MESSAGE_400_PER_PAGE;
 import static com.example.groupchat_backend.helpers.serviceHelpers.GroupHelper.BUILD_GROUP_MESSAGE_RESPONSE;
 import static com.example.groupchat_backend.helpers.shared.AppFunctions.GET_NEXT_INTEGER_COUNT;
@@ -49,7 +52,7 @@ public class GroupMessageServiceImpl implements MessageService {
         User user = userService.findUserById(userSentRawMessage.getSentByUserId());
         if(user == null)return Mono.error(new UserNotFound("User not found with the provided ID : " + userSentRawMessage.getSentByUserId()));
         Group group = groupService.findGroupById(userSentRawMessage.getSentToGroupId());
-        if(group == null)return Mono.error(new GroupNotFound("User group not found with the provided ID : " + userSentRawMessage.getSentByUserId()));
+        if(group == null)return Mono.error(new GroupNotFound(GROUP_NOT_FOUND_ERROR_MESSAGE + userSentRawMessage.getSentByUserId()));
         UserGroupMapping userGroupMapping = groupService.findUserGroupMapping(userSentRawMessage.getSentByUserId(), userSentRawMessage.getSentToGroupId());
         if(userGroupMapping == null)return Mono.error(new BadRequestException("User not mapped to the particular group"));
 
@@ -141,6 +144,18 @@ public class GroupMessageServiceImpl implements MessageService {
                         .sentById(user.getId()).build())
                 .groupId(group.getId())
                 .groupName(group.getGroupName()).build();
+    }
+
+    public Page<GroupMessage> getAllMessageForGroupByPage(Group group, Pageable pageable){
+        return groupMessagesRepo.findAllByGroupId(group.getId(), pageable);
+    }
+
+    public Mono<MessagesMetaData> getMessagesForGroupForPage(String groupId, int pageSize, int nextPage){
+        Group group = groupService.findGroupById(groupId);
+        if(group == null)return Mono.error(new GroupNotFound(GROUP_NOT_FOUND_ERROR_MESSAGE + groupId));
+        Sort sort = Sort.by(Sort.Direction.ASC, "commonMessageData.sentOn");
+        Pageable pageable = AppFunctions.preparePageableWithSort(pageSize, nextPage, sort);
+        return Mono.just(this.buildGroupMessageMetaDataFromMessagePage(this.getAllMessageForGroupByPage(group, pageable)));
     }
 
 }

@@ -20,7 +20,7 @@ public class CommonMessageData {
     private String message;
 
     @Column(name="sent_on")
-    @JsonFormat(pattern="YYYY-MM-DD mm:hh")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime sentOn;
 
     @Column(name="sent_by")
