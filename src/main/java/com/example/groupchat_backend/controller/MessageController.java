@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -24,6 +23,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @Tag(name="Messages API", description = "controller to communicate with the messages")
 @RequestMapping("/message")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class MessageController {
 
