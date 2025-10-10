@@ -29,7 +29,7 @@ public class GroupService {
     private final DatabaseAccessors databaseAccessors;
 
     public Mono<Page<UserGroupMapping>> getAllGroupsForUserWithPage(String userId, Pageable pageable){
-        return Mono.fromCallable(() -> groupUserRepo.findByUserId(userId, pageable));
+        return Mono.fromCallable(() -> databaseAccessors.getAllGroupsForUserWithPage(userId, pageable));
     }
 
     public GroupChannelWithMessages buildGroupChannelsWithMessagesFromGroups(UserGroupMapping group, GroupMessagesMetaData groupMessagePage){
@@ -46,13 +46,13 @@ public class GroupService {
     }
 
     public Group findGroupById(String groupId){
-        Optional<Group> foundGroup = groupRepo.findById(groupId);
+        Optional<Group> foundGroup = databaseAccessors.getGroupWithGroupId(groupId);
 
         return foundGroup.orElse(null);
     }
 
     public UserGroupMapping findUserGroupMapping(String userId, String groupId){
-        Optional<UserGroupMapping> foundGroup = groupUserRepo.findByUserIdAndGroupId(userId, groupId);
+        Optional<UserGroupMapping> foundGroup = databaseAccessors.getUserGroupMapping(userId, groupId);
 
         return foundGroup.orElse(null);
     }
