@@ -3,6 +3,7 @@ package com.example.groupchat_backend.services;
 import com.example.groupchat_backend.exception.GroupNotFound;
 import com.example.groupchat_backend.exception.UserNotFound;
 import com.example.groupchat_backend.exception.baseClasses.BadRequestException;
+import com.example.groupchat_backend.helpers.serviceHelpers.DatabaseAccessors;
 import com.example.groupchat_backend.helpers.shared.AppFunctions;
 import com.example.groupchat_backend.models.group.Group;
 import com.example.groupchat_backend.models.group.UserGroupMapping;
@@ -43,6 +44,9 @@ public class GroupMessageServiceImpl implements MessageService {
 
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private DatabaseAccessors databaseAccessor;
 
 
     @Autowired
@@ -90,9 +94,7 @@ public class GroupMessageServiceImpl implements MessageService {
         return messageForPage;
     }
 
-    public Page<GroupMessage> getAllMessageForGroupById(String groupId, Pageable pageable){
-        return groupMessagesRepo.findAllByGroupId(groupId, pageable);
-    }
+
 
     public MessagePageResponse buildMessagePageResponseForTheGroups(Page<UserGroupMapping> userGroupMappingPage, List<GroupChannelWithMessages> userMessagesForGroup){
         MessagePageResponse response = BUILD_GROUP_MESSAGE_RESPONSE.apply(userMessagesForGroup);
@@ -125,10 +127,6 @@ public class GroupMessageServiceImpl implements MessageService {
                 .build();
     }
 
-    public GroupMessage saveMessageIntoDb(GroupMessage groupMessage){
-        return groupMessagesRepo.save(groupMessage);
-    }
-
     public GroupMessage buildGroupMessageFromRawGroupMessage(RawGroupMessageDTO rawGroupMessageDTO, User user, Group group){
         BigInteger uniqueNextBigIntegerForToday = uniqueDataBignumberService.getNextUniqueDateIdentifier(LocalDate.now().toString(), rawGroupMessageDTO.getSentByUserId());
         String uniqueMessageId = AppFunctions.GENERATE_MESSAGE_UNIQUE_ID(uniqueNextBigIntegerForToday, rawGroupMessageDTO);
@@ -146,10 +144,6 @@ public class GroupMessageServiceImpl implements MessageService {
                 .groupName(group.getGroupName()).build();
     }
 
-    public Page<GroupMessage> getAllMessageForGroupByPage(Group group, Pageable pageable){
-        return groupMessagesRepo.findAllByGroupId(group.getId(), pageable);
-    }
-
     public Mono<MessagesMetaData> getMessagesForGroupForPage(String groupId, int pageSize, int nextPage){
         Group group = groupService.findGroupById(groupId);
         if(group == null)return Mono.error(new GroupNotFound(GROUP_NOT_FOUND_ERROR_MESSAGE + groupId));
@@ -158,4 +152,13 @@ public class GroupMessageServiceImpl implements MessageService {
         return Mono.just(this.buildGroupMessageMetaDataFromMessagePage(this.getAllMessageForGroupByPage(group, pageable)));
     }
 
+    public Page<GroupMessage> getAllMessageForGroupById(String groupId, Pageable pageable){
+        return databaseAccessor.getAllMessageForGroupId(groupId, pageable);
+    }
+    public GroupMessage saveMessageIntoDb(GroupMessage groupMessage){
+        return databaseAccessor.saveMessageToGroup(groupMessage);
+    }
+    public Page<GroupMessage> getAllMessageForGroupByPage(Group group, Pageable pageable){
+        return databaseAccessor.getAllGroupMessagesByPage(group, pageable);
+    }
 }
